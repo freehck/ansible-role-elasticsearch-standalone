@@ -1,0 +1,35 @@
+---
+
+- name: create env file
+  template:
+    src: "{{ elasticsearch_env_file_template }}"
+    dest: "{{ elasticsearch_env_file }}"
+    mode: 0640
+
+- name: deploy elasticsearch container
+  docker_container:
+    name: "{{ elasticsearch_ct_name }}"
+    image: "{{ elasticsearch_ct_image }}"
+    hostname: "{{ elasticsearch_ct_hostname }}"
+    env_file: "{{ elasticsearch_env_file }}"
+    volumes:
+      - "{{ elasticsearch_data_dir }}:/usr/share/elasticsearch/data"
+    ulimits:
+      - nofile:65535:65535
+    ports:
+      - "{{ elasticsearch_bind_ip }}:{{ elasticsearch_port }}:9200"
+    log_driver: "{{ elasticsearch_ct_log_driver }}"
+    log_options:
+      max-size: "{{ elasticsearch_ct_log_max_size }}"
+      max-file: "{{ elasticsearch_ct_log_max_file }}"
+    restart_policy: "{{ elasticsearch_ct_restart_policy }}"
+    state: "{{ elasticsearch_ct_state }}"
+    restart: "{{ elasticsearch_ct_restart }}"
+    pull: "{{ elasticsearch_ct_pull }}"
+    recreate: "{{ elasticsearch_ct_recreate }}"
+
+- debug:
+    msg: >
+      Users have to be configured manually. Enable and set the password for the default users with:
+      `docker exec -it {{ elasticsearch_ct_name }} elasticsearch-setup-passwords auto`
+      Note: yes, '-it' is mandatory

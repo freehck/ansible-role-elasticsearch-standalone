@@ -1,0 +1,26 @@
+---
+elasticsearch_ct_name: "elasticsearch"
+elasticsearch_ct_image: "docker.elastic.co/elasticsearch/elasticsearch:7.8.1"
+elasticsearch_ct_hostname: "{{ inventory_hostname }}"
+
+elasticsearch_bind_ip: "{{ backnet_ip | default('127.0.0.1') }}"
+elasticsearch_port: "9200"
+
+elasticsearch_ct_restart_policy: "always"
+elasticsearch_ct_state: "started"
+elasticsearch_ct_restart: "{{ ct_restart | default(false) }}"
+elasticsearch_ct_pull: "{{ ct_pull | default(true) }}"
+elasticsearch_ct_recreate: "{{ ct_recreate | default(false) }}"
+
+elasticsearch_ct_log_driver: "json-file"
+elasticsearch_ct_log_max_size: "10m"
+elasticsearch_ct_log_max_file: "3"
+
+elasticsearch_env_file_template: "env.j2"
+elasticsearch_srv_dir: "/srv/{{ elasticsearch_ct_name }}"
+elasticsearch_env_file: "{{ elasticsearch_srv_dir }}/env"
+elasticsearch_data_dir: "{{ elasticsearch_srv_dir }}/data"
+
+# additional configuration options
+elasticsearch_java_xms: "8g"
+elasticsearch_java_xmx: "8g"
